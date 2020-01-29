@@ -1,10 +1,9 @@
 import os
 from flask import Flask
+from .schema import create_tables
 
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
 
-@app.route("/hello", methods=['GET'])
-def hello():
-    return "Hello, World"
+create_tables()
