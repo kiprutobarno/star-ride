@@ -12,6 +12,7 @@ def create_tables():
             id SERIAL PRIMARY KEY,
             first_name VARCHAR(255) NOT NULL,
             last_name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
             tel VARCHAR(255),
             password VARCHAR(255) NOT NULL,
             dl_path VARCHAR(255),
