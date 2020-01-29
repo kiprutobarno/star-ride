@@ -1,6 +1,7 @@
 from flask import Flask, abort, json, request
 from flask_restplus import Resource, fields, Model, Api
 from ..models import user_model
+from .helpers import validate_json, validate_email, check_for_blanks, check_data_type, validate_required
 app = Flask(__name__)
 api = Api(app)
 
@@ -9,6 +10,9 @@ class Register(Resource):
     def post(self):
         """creates a new user"""
         data = request.get_json()
+        validate_json()
+        validate_required(request)
+
         first_name = data['first_name']
         last_name = data['last_name']
         email = data['email']
@@ -16,6 +20,10 @@ class Register(Resource):
         password = data['password']
         dl_path = data['dl_path']
         car_reg = data['car_reg']
+
+        check_for_blanks(data)
+        check_data_type(data)
+        validate_email(email)
 
         new_user = user_model.User(first_name,
                                    last_name,
