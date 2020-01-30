@@ -17,3 +17,4 @@ create_tables()
 user_namespace = api.namespace(
     "Users API", description="User registration APIs", path="/api/v1/auth")
 user_namespace.add_resource(auth.Register, "/signup")
+user_namespace.add_resource(auth.Login, "/login")
