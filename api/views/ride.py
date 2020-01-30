@@ -9,7 +9,7 @@ app = Flask(__name__)
 api = Api(app)
 
 
-class CreateRide(Resource):
+class Ride(Resource):
     @jwt_required
     def post(self):
         """Creates a ride if user has already added car and a driver's license"""
@@ -45,3 +45,17 @@ class CreateRide(Resource):
                 "location": location,
                 "departure": departure,
             }, 201
+
+    @jwt_required
+    def get(self):
+        """fetches all existing rides"""
+        rides = ride_model.Ride.get_rides()
+
+        if not rides:
+            return {
+                "message": "no rides available"
+            }, 404
+        return {
+            "status": "success",
+            "rides": rides
+        }, 200
