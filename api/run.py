@@ -48,4 +48,5 @@ user_namespace.add_resource(auth.Logout, "/logout")
 
 ride_namespace = api.namespace(
     "Rides API", description="Ride APIs", path="/api/v1/rides")
-ride_namespace.add_resource(ride.CreateRide, "/create")
+ride_namespace.add_resource(ride.Ride, "/create")
+ride_namespace.add_resource(ride.Ride, "/")
