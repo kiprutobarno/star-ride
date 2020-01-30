@@ -59,3 +59,49 @@ class Ride(Resource):
             "status": "success",
             "rides": rides
         }, 200
+
+    """GET /rides/<ride_id>
+       Fetches the details of a specific ride based on ride id
+    """
+
+class RideDetails(Resource):
+    """GET /rides/<ride_id>
+       Fetches the details of a specific ride based on ride id
+    """
+    @jwt_required
+    def get(self, ride_id):
+        ride = ride_model.Ride.get_ride_by_id(ride_id)
+
+        if not ride:
+            abort(404, "No ride with id {} found".format(ride_id))
+        driver = user_model.User.is_driver(ride['user_id'])
+        driver_name = driver['first_name']+" "+driver['last_name']
+        car_reg = driver['car_reg']
+        return {
+            "status": "success",
+            "driver": driver_name,
+            "car": car_reg,
+            "ride": ride
+        }, 200
+
+
+class CompleteRide(Resource):
+    @jwt_required
+    def post(self, ride_id):
+        """Changes complete to true to reflect ride is successful"""
+        ride = ride_model.Ride.get_ride_by_id(ride_id)
+        if not ride:
+            abort(404, "No ride with id {} found".format(ride_id))
+        if ride['user_id'] != get_raw_jwt()['identity']['id']:
+            # prevent aliens from completing someone's ride
+            abort(401, "Unauthorized action!")
+        ride_to_complete = ride_model.Ride(
+            ride['user_id'], ride['location'], ride['destination'], ride['departure'])
+
+        print((type(ride_to_complete)))
+        ride_to_complete.passengers = ride["passengers"]
+        ride_to_complete.complete_ride(ride_id)
+        return {
+            "status": "success",
+            "ride": ride
+        }, 200
