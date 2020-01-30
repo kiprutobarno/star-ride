@@ -33,7 +33,7 @@ api = Api(app,
 @jwt.token_in_blacklist_loader
 def check_token(decrypted_token):
     jti = decrypted_token['jti']
-    return token_model.RevokedTokens.is_revoked(jti)
+    return token_model.Token.is_revoked(jti)
 
 
 create_tables()
@@ -44,3 +44,4 @@ user_namespace = api.namespace(
     "Users API", description="User registration APIs", path="/api/v1/auth")
 user_namespace.add_resource(auth.Register, "/signup")
 user_namespace.add_resource(auth.Login, "/login")
+user_namespace.add_resource(auth.Logout, "/logout")

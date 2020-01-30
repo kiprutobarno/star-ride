@@ -1,7 +1,7 @@
 from . import CRUD
 
 
-class RevokedTokens():
+class Token():
     def __init__(self, token):
         self.token = token
 
