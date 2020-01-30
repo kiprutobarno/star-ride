@@ -4,7 +4,7 @@ from flask_restplus import Api, fields
 from flask_jwt_extended import JWTManager
 from .schema import create_tables
 
-from .views import auth
+from .views import auth, ride
 from .models import token_model
 
 app = Flask(__name__)
@@ -45,3 +45,7 @@ user_namespace = api.namespace(
 user_namespace.add_resource(auth.Register, "/signup")
 user_namespace.add_resource(auth.Login, "/login")
 user_namespace.add_resource(auth.Logout, "/logout")
+
+ride_namespace = api.namespace(
+    "Rides API", description="Ride APIs", path="/api/v1/rides")
+ride_namespace.add_resource(ride.CreateRide, "/create")
