@@ -2,7 +2,7 @@ from flask import Flask, abort, json, request
 from flask_restplus import Resource, fields, Model, Api
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_required, get_raw_jwt)
-from ..models import user_model
+from ..models import user_model, token_model
 from .helpers import validate_json, validate_email, check_for_blanks, check_data_type, validate_required, required_input
 app = Flask(__name__)
 api = Api(app)
@@ -85,3 +85,14 @@ class Login(Resource):
                 "status": "fail",
                 "message": "wrong password",
             }, 400
+
+
+class Logout(Resource):
+    @jwt_required
+    def post(self):
+        """logs out user by adding current token to revoked token list"""
+        jti = get_raw_jwt()['jti']
+        token = token_model.Token(jti)
+        token.revoke_token()
+
+        return {'message': 'Access revoked and logged out!'}, 201
