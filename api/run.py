@@ -5,12 +5,15 @@ from flask_jwt_extended import JWTManager
 from .schema import create_tables
 
 from .views import auth
+from .models import token_model
 
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 jwt = JWTManager(app)
 
 app.config['JWT_SECRET_KEY'] = "superpower"
+app.config['JWT_BLACKLIST_ENABLED'] = True
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
 authorizations = {
     'apikey': {
@@ -25,6 +28,13 @@ api = Api(app,
           security='apiKey',
           description='Star Ride API endpoint'
           )
+
+
+@jwt.token_in_blacklist_loader
+def check_token(decrypted_token):
+    jti = decrypted_token['jti']
+    return token_model.RevokedTokens.is_revoked(jti)
+
 
 create_tables()
 
