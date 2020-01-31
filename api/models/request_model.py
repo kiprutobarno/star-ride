@@ -16,8 +16,8 @@ class Request():
         CRUD.commit(query)
 
     @staticmethod
-    def get_requests(ride_id):
-        query = """SELECT ride_id, passenger_id, pickup, dropoff, status FROM requests WHERE ride_id={}""".format(
+    def get_ride_requests(ride_id):
+        query = """SELECT id, passenger_id, pickup, dropoff, status FROM requests WHERE ride_id={}""".format(
             ride_id)
 
         return CRUD.readAll(query)
