@@ -3,7 +3,7 @@ from flask_restplus import Resource, fields, Model, Api
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_required, get_raw_jwt)
 from ..models import user_model, token_model
-from .helpers import validate_json, validate_email, check_for_blanks, check_data_type, validate_required, required_input
+from .helpers import validate_json, validate_email, check_for_blanks, check_data_type, validate_required, required_input, optional_input
 app = Flask(__name__)
 api = Api(app)
 
@@ -13,7 +13,13 @@ class Register(Resource):
         """creates a new user"""
         data = request.get_json()
         validate_json()
-        validate_required(request)
+        required_input("first_name", 400)
+        required_input("last_name", 400)
+        required_input("email", 400)
+        required_input("tel", 400)
+        required_input("password", 400)
+        optional_input("car_reg")
+        optional_input("dl_path")
 
         first_name = data['first_name']
         last_name = data['last_name']
@@ -23,7 +29,7 @@ class Register(Resource):
         dl_path = data['dl_path']
         car_reg = data['car_reg']
 
-        check_for_blanks(data)
+        # check_for_blanks(data)
         check_data_type(data)
         validate_email(email)
 

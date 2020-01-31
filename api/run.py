@@ -4,7 +4,7 @@ from flask_restplus import Api, fields
 from flask_jwt_extended import JWTManager
 from .schema import create_tables
 
-from .views import auth, ride
+from .views import auth, ride, request
 from .models import token_model
 
 app = Flask(__name__)
@@ -52,3 +52,7 @@ ride_namespace.add_resource(ride.Ride, "/create")
 ride_namespace.add_resource(ride.Ride, "/")
 ride_namespace.add_resource(ride.RideDetails, "/<ride_id>")
 ride_namespace.add_resource(ride.CompleteRide, "/<ride_id>/complete")
+
+request_namespace = api.namespace(
+    "Requests API", description="Request APIs", path="/api/v1/requests")
+request_namespace.add_resource(request.RideRequest, "/<ride_id>")
