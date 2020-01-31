@@ -20,7 +20,7 @@ def required_input(data_input, status_code):
         abort(status_code, "field {0} is required".format(data_input))
 
 
-def optional_input(data_input, status_code):
+def optional_input(data_input):
     """puts empty field in optional inputs"""
     if not data_input in request.get_json():
         data = request.get_json()
@@ -56,4 +56,3 @@ def check_data_type(data):
     for key, value in data.items():
         if not isinstance(value, str):
             return abort(400, "A {} must be a String".format(key))
-        
