@@ -11,6 +11,26 @@ api = Api(app)
 
 class RideRequest(Resource):
     @jwt_required
+    def get(self, ride_id):
+        """Fetches all requests for <ride_id>"""
+        user_id = get_raw_jwt()['identity']['id']
+        ride = ride_model.Ride.get_ride_by_driver(user_id)
+        if not ride or str(ride["id"]) != ride_id:
+            abort(404, "no rides found")
+        requests = request_model.Request.get_ride_requests(ride_id)
+        request_list = []
+        for request in requests:
+            passenger = user_model.User.get_passenger(request['passenger_id'])
+            request_list.append({
+                "id": request['id'],
+                "passenger": passenger['first_name']+" "+passenger['last_name'],
+                "pickup": request['pickup'],
+                "dropoff": request['dropoff'],
+                "status": request['status']
+            })
+
+        return {"status": "success", "ride_requests": request_list}, 200
+
     def post(self, ride_id):
         validate_json()
         required_input("pickup", 400)

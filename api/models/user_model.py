@@ -43,3 +43,9 @@ class User():
 
         driver = CRUD.readOne(query)
         return driver
+
+    @staticmethod
+    def get_passenger(user_id):
+        query = "SELECT first_name, last_name FROM users WHERE id = {} AND car_reg='' AND dl_path=''".format(
+            user_id)
+        return CRUD.readOne(query)
