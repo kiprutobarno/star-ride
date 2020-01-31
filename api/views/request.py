@@ -42,3 +42,23 @@ class RideRequest(Resource):
             "driver": ride_details['first_name']+" "+ride_details['last_name'],
             "request_status": ride_request.status
         }, 201
+
+
+class ProcessRequest(Resource):
+    @jwt_required
+    def put(self, ride_id, request_id):
+        """ Changes the status of the ride <ride_id> request <request_id> to reflect "accepted" or "rejected"
+        """
+        required_input("request_status", 400)
+        user_id = get_raw_jwt()['identity']["id"]
+        ride = ride_model.Ride.get_ride_by_driver(user_id)
+        if not ride or str(ride["id"]) != ride_id:
+            abort(404, "Page not found")
+
+        data = request.get_json()
+        status = data['request_status']
+        request_model.Request.process_request(status, request_id, ride_id)
+        return {
+            "status": "success",
+            "request_status": status
+        }, 200

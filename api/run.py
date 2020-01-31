@@ -54,5 +54,7 @@ ride_namespace.add_resource(ride.RideDetails, "/<ride_id>")
 ride_namespace.add_resource(ride.CompleteRide, "/<ride_id>/complete")
 
 request_namespace = api.namespace(
-    "Requests API", description="Request APIs", path="/api/v1/requests")
-request_namespace.add_resource(request.RideRequest, "/<ride_id>")
+    "Requests API", description="Request APIs", path="/api/v1/rides")
+request_namespace.add_resource(request.RideRequest, "/<ride_id>/request")
+request_namespace.add_resource(
+    request.ProcessRequest, "/<ride_id>/request/<request_id>")
