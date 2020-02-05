@@ -77,9 +77,11 @@ class Login(Resource):
         if user_model.User.verify_password(password, password_hash):
             payload = {
                 "id": user_exists['id'],
-                "email": user_exists['email']
+                "email": user_exists['email'],
+                "car_reg": user_exists['car_reg']
             }
-            access_token = create_access_token(identity=payload)
+            access_token = create_access_token(
+                identity=payload, expires_delta=False)
             return {
                 "status": "success",
                 "message": "{} logged in".format(username),

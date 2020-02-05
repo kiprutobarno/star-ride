@@ -33,3 +33,15 @@ class Request():
         query = """UPDATE requests SET status='{}' WHERE id={} and ride_id={}""".format(
             status, request_id, ride_id)
         CRUD.commit(query)
+
+    @staticmethod
+    def get_passenger(ride_id, passenger_id):
+        query = """SELECT id, passenger_id FROM requests WHERE ride_id={} AND status='{}' AND passenger_id={}""".format(
+            ride_id, "accepted", passenger_id)
+        return CRUD.readOne(query)
+
+    @staticmethod
+    def get_passengers(ride_id):
+        query = """SELECT id, passenger_id FROM requests WHERE ride_id={} AND status='{}'""".format(
+            ride_id, "accepted")
+        return CRUD.readAll(query)

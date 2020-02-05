@@ -26,7 +26,8 @@ def create_tables():
             location VARCHAR(255) NOT NULL,
             destination VARCHAR(255) NOT NULL,
             departure VARCHAR(255) NOT NULL,
-            passengers VARCHAR(255)
+            capacity INTEGER NOT NULL,
+            passengers INTEGER NOT NULL
         )
         """,
         """
@@ -72,4 +73,3 @@ def create_tables():
     finally:
         if conn is not None:
             conn.close()
-    

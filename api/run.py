@@ -36,6 +36,11 @@ def check_token(decrypted_token):
     return token_model.Token.is_revoked(jti)
 
 
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+    return identity
+
+
 create_tables()
 
 """Register user"""
@@ -55,6 +60,12 @@ ride_namespace.add_resource(ride.CompleteRide, "/<ride_id>/complete")
 
 request_namespace = api.namespace(
     "Requests API", description="Request APIs", path="/api/v1/rides")
-request_namespace.add_resource(request.RideRequest, "/<ride_id>/requests")
+request_namespace.add_resource(request.RideRequest, "/<ride_id>/book")
+request_namespace.add_resource(request.ProcessRequest, "/<ride_id>/requests")
 request_namespace.add_resource(
     request.ProcessRequest, "/<ride_id>/requests/<request_id>")
+request_namespace.add_resource(
+    request.RidePassengers, "/<ride_id>/passengers")
+
+request_namespace.add_resource(
+    request.RidePassenger, "/<ride_id>/passengers/<passenger_id>")
