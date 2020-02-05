@@ -4,17 +4,18 @@ from . import CRUD
 class Ride():
     """Instantiates the user_id, location, destination and time of departure"""
 
-    def __init__(self, user_id, location, destination, departure):
+    def __init__(self, user_id, location, destination, departure, capacity, passengers=0):
         self.user_id = user_id
         self.location = location
         self.destination = destination
         self.departure = departure
-        self.passengers = []
+        self.capacity = capacity
+        self.passengers = passengers
 
     def create_ride(self):
         """creates a new ride"""
-        query = """INSERT INTO rides(user_id, location, destination, departure) VALUES ({},'{}','{}','{}')""".format(
-            self.user_id, self.location, self.destination, self.departure)
+        query = """INSERT INTO rides(user_id, location, destination, departure, capacity, passengers) VALUES ({},'{}','{}','{}', {}, {})""".format(
+            self.user_id, self.location, self.destination, self.departure, self.capacity, self.passengers)
         CRUD.commit(query)
 
     @staticmethod
@@ -32,6 +33,19 @@ class Ride():
         return ride
 
     @staticmethod
+    def update_passengers(passengers, ride_id):
+        """Gets details of a particular incomplete ride by ride id"""
+        query = """UPDATE rides SET passengers={} WHERE id={}""".format(
+            passengers, ride_id)
+        return CRUD.commit(query)
+
+    @staticmethod
+    def get_passengers_no(ride_id):
+        """Gets details of a particular incomplete ride by ride id"""
+        query = "SELECT passengers FROM rides WHERE id={}".format(ride_id)
+        return CRUD.readOne(query)
+
+    @staticmethod
     def get_ride_by_driver(driver_id):
         """"Get incomplete rides of a particular driver id"""
         query = "SELECT * FROM rides WHERE user_id={}".format(driver_id)
@@ -46,7 +60,7 @@ class Ride():
         queries = [
             """
             INSERT INTO complete_rides(ride_id, driver_id, location, destination, departure, passengers)
-            VALUES ({}, {}, '{}', '{}', '{}', '{}')""".format(ride_id, self.user_id, self.location, self.destination, self.departure, self.passengers),
+            VALUES ({}, {}, '{}', '{}', '{}', {})""".format(ride_id, self.user_id, self.location, self.destination, self.departure, self.capacity),
             """DELETE FROM rides where id={}""".format(ride_id)
         ]
         for query in queries:

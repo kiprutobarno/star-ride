@@ -4,6 +4,7 @@ from flask_jwt_extended import (jwt_required, get_raw_jwt)
 
 from ..models import user_model, ride_model
 from .helpers import required_input, validate_email, validate_json
+from .request import driver_required
 
 app = Flask(__name__)
 api = Api(app)
@@ -17,6 +18,7 @@ class Ride(Resource):
         required_input("location", 422)
         required_input("destination", 422)
         required_input("departure", 422)
+        required_input("capacity", 422)
 
         data = request.get_json()
 
@@ -25,7 +27,9 @@ class Ride(Resource):
         location = data['location']
         destination = data['destination']
         departure = data['departure']
-        ride = ride_model.Ride(user_id, location, destination, departure)
+        capacity = data['capacity']
+        ride = ride_model.Ride(
+            user_id, location, destination, departure, capacity)
 
         # check if user has added car and driver's license
         is_driver = user_model.User.is_driver(user_id)
@@ -44,6 +48,7 @@ class Ride(Resource):
                 "car": car_reg,
                 "location": location,
                 "departure": departure,
+                "capacity": capacity
             }, 201
 
     @jwt_required
@@ -55,14 +60,27 @@ class Ride(Resource):
             return {
                 "message": "no rides available"
             }, 404
-        return {
-            "status": "success",
-            "rides": rides
-        }, 200
+        rides_list = []
+        for ride in rides:
+            driver = user_model.User.is_driver(ride['user_id'])
+            rides_list.append({
+                "id": ride['id'],
+                "driver": driver['first_name']+" "+driver['last_name'],
+                "location": ride['location'],
+                "departure": ride['departure'],
+                "capacity": ride['capacity'],
+                "passengers": ride['passengers']
+            })
+        return {"status": "success", "rides": rides_list}, 200
+        # return {
+        #     "status": "success",
+        #     "rides": rides
+        # }, 200
 
     """GET /rides/<ride_id>
        Fetches the details of a specific ride based on ride id
     """
+
 
 class RideDetails(Resource):
     """GET /rides/<ride_id>
@@ -86,7 +104,7 @@ class RideDetails(Resource):
 
 
 class CompleteRide(Resource):
-    @jwt_required
+    @driver_required
     def post(self, ride_id):
         """Changes complete to true to reflect ride is successful"""
         ride = ride_model.Ride.get_ride_by_id(ride_id)
@@ -96,9 +114,8 @@ class CompleteRide(Resource):
             # prevent aliens from completing someone's ride
             abort(401, "Unauthorized action!")
         ride_to_complete = ride_model.Ride(
-            ride['user_id'], ride['location'], ride['destination'], ride['departure'])
+            ride['user_id'], ride['location'], ride['destination'], ride['departure'], ride['capacity'])
 
-        print((type(ride_to_complete)))
         ride_to_complete.passengers = ride["passengers"]
         ride_to_complete.complete_ride(ride_id)
         return {

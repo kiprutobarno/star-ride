@@ -31,14 +31,14 @@ class User():
 
     @staticmethod
     def find_by_email(email):
-        query = "SELECT id, first_name, last_name, email, tel, password FROM users WHERE email = '{0}'".format(
+        query = "SELECT id, first_name, last_name, email, tel, password, car_reg FROM users WHERE email = '{0}'".format(
             email)
         user = CRUD.readOne(query)
         return user
 
     @staticmethod
     def is_driver(user_id):
-        query = "SELECT first_name, last_name, dl_path, car_reg FROM users WHERE id = {0}".format(
+        query = "SELECT first_name, last_name, dl_path, car_reg FROM users WHERE id = {0} AND dl_path !='' AND car_reg !=''".format(
             user_id)
 
         driver = CRUD.readOne(query)
